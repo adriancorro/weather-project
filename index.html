@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Project</title>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+    <section>
+        <div class="autocomplete" style="width:300px;">
+            <input id="searchCity" type="text" name="myCountry" placeholder="Country">
+        </div>
+        <button id="btnSearch">Searh by city, state, country</button>
+        <input id="searchCountrie" type="text">
+        <div id="btnCountrie">(optional) Searh by country</div>
+        <img src ="" id="iconWeatherImg">
+        <div id="nameCountrie"></div>
+        <div id="descriptionWeatherDiv"></div>
+        <div id="cityWeatherDiv"></div>
+        <div id="temperatureWeatherDiv"></div>
+        <div id="divmap">
+           <div id=""></div>
+        </div>
+        
+
+        <!--Make sure the form has the autocomplete function switched off:-->
+
+    </section>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/autocomplete.js"></script>
+    <script type="text/javascript" src="js/mapbox.js"></script>
+</body>
+</html>   

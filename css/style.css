@@ -1,0 +1,42 @@
+#searchCountrie{
+    display: block;
+}
+body { 
+    margin: 0; padding: 0; 
+}
+#divmap { 
+    width: 600px;
+    height: 600px;
+ }
+
+#map { 
+        display: inline;
+    top: 20px; 
+    bottom: 0;
+     width: 100%;
+ }
+
+ .divParent{
+     background-color: green;
+     display: flex;
+     flex-direction: row;
+     flex-wrap: nowrap;
+     justify-content: space-around;
+     align-items: baseline;
+     align-content: stretch;
+ 
+      
+    
+ }
+
+ .divChild{
+    background-color: rgb(141, 21, 141);
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    align-content: stretch;
+    width: 400px;
+    margin-bottom: 50px;
+}
