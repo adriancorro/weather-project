@@ -1,28 +1,25 @@
 /* https://docs.google.com/presentation/d/1vdQT9M8jMmdWwhEOWUTBkNP5E0ddEdpV5pQtjf9acaM/edit#slide=id.g80910844c9_0_14
  */   
     const searchCity = document.getElementById(`searchCity`)
-    const searchCountrie = document.getElementById(`searchCountrie`)
-
     const btnSearch = document.getElementById(`btnSearch`)
-    
-   
 
-    const getWeath = () =>  window.navigator.geolocation.getCurrentPosition(  geoResult => {
+    const getWeath = (p) =>  window.navigator.geolocation.getCurrentPosition(  geoResult => {
     // Coordenas obtenidas
     let geolatitude;
     let geolongitude;
     geolatitude = geoResult.coords.latitude, 
     geolongitude = geoResult.coords.longitude
-  
 
     // Request API. Las API nos pide que le enviemos 3 parametros 
     const url = new URL(`https://api.weatherbit.io/v2.0/current`)
-    if(searchCity.value || searchCountrie.value ){
+
+    if(searchCity.value ){
       url.searchParams.set(`city`,searchCity.value)
-      url.searchParams.set(`country`,searchCountrie.value)
-    }else{
-    url.searchParams.set(`lat`,geolatitude)
-    url.searchParams.set(`lon`,geolongitude)
+    }else if (p) {
+      url.searchParams.set(`city`,p)
+    } else {
+      url.searchParams.set(`lat`,geolatitude)
+      url.searchParams.set(`lon`,geolongitude)
     }
     url.searchParams.set(`key`,`9fd19cddd4594041b751dcb8f6c01405`)
     url.searchParams.set(`lang`,`es`)
@@ -50,15 +47,49 @@
         temperatureWeatherDiv.innerText = temperature
         descriptionWeatherDiv.innerText =  description
         cityWeatherDiv.innerText = city
+
+        addFavoritos.push(urlIcon)
+        addFavoritos.push(temperature)
+        addFavoritos.push(description)
+        addFavoritos.push(city)
+        addFavoritos.push(weather.lat)
+        addFavoritos.push(weather.lon)
+
+        if(p){
+          const divChild = document.createElement(`div`)
+          divChild.setAttribute("id", "divChild")
+          divParent.appendChild(divChild);
+          divChild.setAttribute("class", "divChild");
+          divChild.innerText = city
+
+          const imgFav = document.createElement(`img`)
+          imgFav.setAttribute("class", "imgFav");
+          imgFav.src = urlIcon
+          divChild.appendChild(imgFav);
+
+          const temp = document.createElement(`div`)
+          temp.innerText = temperature
+          divChild.appendChild(temp);
+
+          const desc = document.createElement(`div`)
+          desc.innerText = description
+          divChild.appendChild(desc);
+        }
+              
     })
     .catch((error) => {
         console.log(error)
     }) 
 })
+
+let addFavoritos = []
+let ultimoPais = []
+
 let body = document.querySelector("body")
 let divParent = document.createElement(`div`)
 body.appendChild(divParent);
 divParent.setAttribute("class", "divParent")
+divParent.setAttribute("id", "divParent")
 
 
 const getNameCountrie = (codeCountrie) => {
@@ -72,18 +103,18 @@ const getNameCountrie = (codeCountrie) => {
     const countrie = await response.json();
     return countrie;
   }
-  
+
+
   fetchGetNameCountrie().then(response => {
+    ultimoPais = []
     const nameCountrie = document.getElementById(`nameCountrie`)
+    ultimoPais.push(response.name)
     nameCountrie.innerText = response.name
     searchCity.value
-    const divChild = document.createElement(`div`)
-    divParent.appendChild(divChild);
-    divChild.setAttribute("class", "divChild")
-    divChild.innerText =` 1:  ${response.name} `
-   
+    pais = response.name
     completo = response.nativeName ;
-    let cityAndCountrie = ciudadString + completo
+    let cityAndCountrie = ciudadString + response.alpha2Code
+
     countries.push(cityAndCountrie)
   });
   
@@ -95,12 +126,22 @@ const getNameCountrie = (codeCountrie) => {
 }
 
 btnSearch.addEventListener("click", function( event ) {
+  addFavoritos = []
     getWeath()
+    console.log(addFavoritos )
+    console.log(ultimoPais )
+
+  }, false);
+
+  const cities = [];
+  btnFav.addEventListener("click", function( event ) {
+     
+     getWeath(addFavoritos[3])
+   
   }, false);
   
   let countries = [];
   let ciudadString;
-  let completo;
   searchCity.addEventListener("keyup", function(event) {
       const value = event.target.value;
        // Request API. Las API nos pide que le enviemos 3 parametros 
@@ -121,6 +162,7 @@ btnSearch.addEventListener("click", function( event ) {
           // datos a obtener
           const weather = json.data[0]
           const country_code = weather.country_code
+         
          getNameCountrie(country_code)
           ciudadString = searchCity.value + ", "
           module.exports = countries; 
@@ -133,24 +175,21 @@ btnSearch.addEventListener("click", function( event ) {
   });
 
 
-  class citiesTime{
-    constructor (cityname, country, timeIcon, weatherTemperature, temperatureDetail,lat,lon){
-      this.cityname = cityname
-      this.country = country
-      this.timeIcon = timeIcon
-      this.weatherTemperature = weatherTemperature
-      this.temperatureDetail = temperatureDetail
-      this.lat = lat
-      this.lon = lon
-    } 
-}
+ /*  cities.forEach( codeCountrie => getNameCountrie(codeCountrie.cityname) )
+ */
 
-const barcelona = new citiesTime("ve", "spain", "dff","23c" ,"lluvioso","456","754")
-const madrid = new citiesTime("arg", "2spain", "2dff","223c" ,"2lluvioso","345","545")
 
-let codeCountries = [barcelona]
-codeCountries.push(madrid)
+const citiesPrincipal = [];
 
-codeCountries.forEach( codeCountrie => getNameCountrie(codeCountrie.cityname) )
+citiesPrincipal.push({
+    name: "Barcelona",
+    latitude: 41.41,
+    longitude: 2.19,
+});
 
-console.log(barcelona)
+citiesPrincipal.push({
+    name: "Madrid",
+    latitude: 40.41,
+    longitude: -3.70,
+});
+citiesPrincipal.forEach( citie =>getWeath(citie.name) )

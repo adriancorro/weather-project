@@ -6,37 +6,42 @@ body {
 }
 #divmap { 
     width: 600px;
-    height: 600px;
  }
 
 #map { 
-        display: inline;
-    top: 20px; 
+    display: inline;
+    top: 50px; 
     bottom: 0;
      width: 100%;
  }
 
  .divParent{
-     background-color: green;
+    background-color: hsl(120deg 48% 61% / 32%);
      display: flex;
      flex-direction: row;
      flex-wrap: nowrap;
-     justify-content: space-around;
+     justify-content: center;
      align-items: baseline;
      align-content: stretch;
+     padding-bottom: 300px;
  
       
     
  }
 
  .divChild{
-    background-color: rgb(141, 21, 141);
+    background-color: rgb(121 98 121 / 54%);
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
     justify-content: flex-start;
     align-items: stretch;
     align-content: stretch;
-    width: 400px;
+    width: 150px;
     margin-bottom: 50px;
+    margin-left: 10px;
+}
+
+.imgFav{
+   width: 50px;
 }
