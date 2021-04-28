@@ -58,54 +58,42 @@
 let body = document.querySelector("body")
 let divParent = document.createElement(`div`)
 body.appendChild(divParent);
+divParent.setAttribute("class", "divParent")
 
-async function myFetch() {
-  try {
-    let response = await fetch('https://restcountries.eu/rest/v2/alpha/ve');
 
+const getNameCountrie = (codeCountrie) => {
+  const fetchGetNameCountrie = async () => {
+    const response = await fetch(`https://restcountries.eu/rest/v2/alpha/${codeCountrie}`);
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    } else {
-      let myBlob = await response.value;
-
-      console.log("ddddddd44444444444ddd" + myBlob)
-      console.log("dddddddddd" + response.name)
+      const message = `An error has occured: ${response.status}`;
+      console.log(message)
+      throw new Error(message);
     }
-  } catch(e) {
-    console.log(e);
+    const countrie = await response.json();
+    return countrie;
   }
+  
+  fetchGetNameCountrie().then(response => {
+    const nameCountrie = document.getElementById(`nameCountrie`)
+    nameCountrie.innerText = response.name
+    searchCity.value
+    const divChild = document.createElement(`div`)
+    divParent.appendChild(divChild);
+    divChild.setAttribute("class", "divChild")
+    divChild.innerText =` 1:  ${response.name} `
+   
+    completo = response.nativeName ;
+    let cityAndCountrie = ciudadString + completo
+    countries.push(cityAndCountrie)
+  });
+  
+  fetchGetNameCountrie().catch(error => {
+    error.message; 
+    console.log(error.message)
+  });
+  
 }
 
-myFetch();
-
-
-let ggjhj;
-divParent.setAttribute("class", "divParent")
- const getNameCountrie = (codeCountrie)  => {   
-       fetch(`https://restcountries.eu/rest/v2/alpha/${codeCountrie}`) 
-            .then(data => data.json())
-            .then(function(response){ 
-                const nameCountrie = document.getElementById(`nameCountrie`)
-                nameCountrie.innerText = response.name
-                searchCity.value
-
-
-               
-                const divChild = document.createElement(`div`)
-                divParent.appendChild(divChild);
-                divChild.setAttribute("class", "divChild")
-                divChild.innerText =` 1:  ${response.name} `
-                ggjhj = response.name
-                completo = response.nativeName ;
-                let cityAndCountrie = ciudadString + completo
-                countries.push(cityAndCountrie)
-                 
-              
-            })
-       };
-     console.log(` 15555555555555:  ${ggjhj} ` )
-  getWeath()
- 
 btnSearch.addEventListener("click", function( event ) {
     getWeath()
   }, false);
@@ -115,7 +103,7 @@ btnSearch.addEventListener("click", function( event ) {
   let completo;
   searchCity.addEventListener("keyup", function(event) {
       const value = event.target.value;
-    /*   // Request API. Las API nos pide que le enviemos 3 parametros 
+       // Request API. Las API nos pide que le enviemos 3 parametros 
       const url = new URL(`https://api.weatherbit.io/v2.0/current`)
       if(searchCity.value  ){
         url.searchParams.set(`city`,searchCity.value)
@@ -140,13 +128,29 @@ btnSearch.addEventListener("click", function( event ) {
       })
       .catch((error) => {
           console.log(error)
-      })  */
+      })  
  
   });
-  let codeVe = ["ve","ar"]
-  codeVe.push("us")
 
-  codeVe.forEach(element => {
-    getNameCountrie(element)
-  });
 
+  class citiesTime{
+    constructor (cityname, country, timeIcon, weatherTemperature, temperatureDetail,lat,lon){
+      this.cityname = cityname
+      this.country = country
+      this.timeIcon = timeIcon
+      this.weatherTemperature = weatherTemperature
+      this.temperatureDetail = temperatureDetail
+      this.lat = lat
+      this.lon = lon
+    } 
+}
+
+const barcelona = new citiesTime("ve", "spain", "dff","23c" ,"lluvioso","456","754")
+const madrid = new citiesTime("arg", "2spain", "2dff","223c" ,"2lluvioso","345","545")
+
+let codeCountries = [barcelona]
+codeCountries.push(madrid)
+
+codeCountries.forEach( codeCountrie => getNameCountrie(codeCountrie.cityname) )
+
+console.log(barcelona)
