@@ -33,7 +33,7 @@ function autocomplete(inp, arr) {
                 /*close the list of autocompleted values,
                 (or any other open lists of autocompleted values:*/
                 closeAllLists();
-                countries = []
+                // countries = []
                 //module.exports = countries; 
 
             });
@@ -97,15 +97,14 @@ function autocomplete(inp, arr) {
         closeAllLists(e.target);
     });
   }
-  
-  /*An array containing all the country names in the world:*/
-  
+
+// Hacemos que los valores no se repitan
+  function onlyUnique(value, index, self) { 
+    return self.indexOf(value) === index;
+}
+var unique = countries.filter( onlyUnique )
 
   /*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
-  autocomplete(document.getElementById("searchCity"), countries);
+  autocomplete(document.getElementById("searchCity"), unique);
 
-  
 
-  console.log(countries)
-  countries  = require('./autocomplete.js')
- 
