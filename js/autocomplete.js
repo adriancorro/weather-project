@@ -99,12 +99,9 @@ function autocomplete(inp, arr) {
   }
 
 // Hacemos que los valores no se repitan
-  function onlyUnique(value, index, self) { 
-    return self.indexOf(value) === index;
-}
-var unique = countries.filter( onlyUnique )
+
 
   /*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
-  autocomplete(document.getElementById("searchCity"), unique);
+  autocomplete(document.getElementById("searchCity"),  countries);
 
-
+   
