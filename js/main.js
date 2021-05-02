@@ -151,7 +151,12 @@ btnSearch.addEventListener("click", function( event ) {
 
   btnFav.addEventListener("click", function( event ) {
     addFav = true
+    citiesPrincipal.push({
+      latitude: addFavoritos[4],
+      longitude: addFavoritos[5]
+    })
     getWeath(addFavoritos[5], addFavoritos[4])
+
     addFavoritos = []
   }, false);
 
