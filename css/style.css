@@ -45,3 +45,7 @@ body {
 .imgFav{
    width: 50px;
 }
+
+.principal {
+    background-color: chartreuse;
+}

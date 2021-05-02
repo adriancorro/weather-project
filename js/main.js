@@ -6,19 +6,17 @@
     let addFavoritos = []
     let countries = [];
     const citiesPrincipal = [];
-    const citiesTemporal = [];
     let addFav = true
     let ciudadString ;
-
-    const getWeath = (searchlat, searchlon) => 
-     window.navigator.geolocation.getCurrentPosition(  geoResult => {
-    // Coordenas obtenidas
     let geolatitude;
-    let geolongitude;
-    geolatitude = geoResult.coords.latitude, 
-    geolongitude = geoResult.coords.longitude
+    let geolongitude; 
 
-    // Request API. Las API nos pide que le enviemos 3 parametros 
+  
+
+ 
+    
+    const getWeath = (searchlat, searchlon) =>  {
+      // Request API. Las API nos pide que le enviemos 3 parametros 
     const url = new URL(`https://api.weatherbit.io/v2.0/current`)
 
     if(searchCity.value ){
@@ -66,16 +64,6 @@
         addFavoritos.push(weather.lat)
         addFavoritos.push(weather.lon)
 
-     
-        citiesTemporal.push({
-            name: city,
-            latitude: weather.lat,
-            longitude: weather.lon,
-            temperature: temperature,
-            description: description,
-            urlIcon: urlIcon,
-          })
-
           const fetchGetNameCountrieAsyn = async () => {
               const response = await fetch(`https://restcountries.eu/rest/v2/alpha/${country_code}`);
             if (!response.ok) {
@@ -92,19 +80,20 @@
             getWeath(Parametro1, Parametro2) por lo que renderiza segun lat y lon
             solo si enviamos lat y lon se activara esta parte del codigo
  */        if(searchlat && searchlon && addFav ){
-          citiesPrincipal.push({
-            name: city,
-            latitude: weather.lat,
-            longitude: weather.lon,
-          });
-          //parent div
+           //parent div
           const divChild = document.createElement(`div`)
           divChild.setAttribute("id", "divChild")
 
           //child div
           divParent.appendChild(divChild);
-          divChild.setAttribute("class", "divChild");
-          divChild.innerText = city
+          if(searchlat == geolatitude ){
+            divChild.setAttribute("class", "divChild principal");
+            divChild.innerText = city + " (Current City)"
+          }else{
+            divChild.setAttribute("class", "divChild");
+           divChild.innerText = city
+          }
+      
           countries.push(city)
          
           fetchGetNameCountrieAsyn().then(response => {
@@ -119,11 +108,7 @@
             error.message; 
             console.log(error.message)
           });
-
           fetchGetNameCountrieAsyn()
-
-         
-  
           const imgFav = document.createElement(`img`)
           imgFav.setAttribute("class", "imgFav");
           imgFav.src = urlIcon
@@ -137,16 +122,15 @@
           desc.innerText = description
           divChild.appendChild(desc);
           mapBox()
-        }
-       
-      
-              
+        }      
     })
     .catch((error) => {
         console.log(error)
     }) 
-})
+}
 
+
+ 
 let body = document.querySelector("body")
 let divParent = document.createElement(`div`)
 body.appendChild(divParent);
@@ -171,28 +155,118 @@ btnSearch.addEventListener("click", function( event ) {
     addFavoritos = []
   }, false);
 
-  
+  /* 
+  Queremos que el push de citiesPrincipal sea el de geolocation, pero como esta es una funcion
+  normalmnte demora, debido a eso el push no se hace en el orden requerido por eso las siguientes lineas
+  de codigos
+  */
+ /*  
+ let  geoLocation = () => { 
+    return new Promise (resolve => { 
+      let geolatitude;
+      let geolongitude;     
+      window.navigator.geolocation.getCurrentPosition(  geoResult => {
+        // Coordenas obtenidas
+        geolatitude = geoResult.coords.latitude, 
+        geolongitude = geoResult.coords.longitude
+        resolve (
+          citiesPrincipal.push({
+            latitude: geoResult.coords.latitude,
+            longitude: geoResult.coords.longitude
+          })
+        )
+      })
+    });
+  } 
+  let  push2 = () => { 
+    return new Promise (resolve => { 
+        resolve (
+          citiesPrincipal.push({
+            latitude: 41.41,
+            longitude: 2.19,
+          })
+        )
+    })
+  } 
+  let  push3 = () => { 
+    return new Promise (resolve => { 
+        resolve (
+          citiesPrincipal.push({
+            latitude: 40.41,
+            longitude: -3.70,
+          })
+        )
+    })
+  } 
+  let  foreachBucle = () => { 
+    return new Promise (resolve => { 
+        resolve (
+          citiesPrincipal.forEach( citie =>
+            getWeath(citie.latitude, citie.longitude)) 
+        )
+    })
+  } 
+  async function asyncPush() {
+    let x = await geoLocation();
+    let z = await push2();
+    let y = await push3();
+    let ww = await foreachBucle();
+    return  await x +  await z  +  await y  +  await ww 
+  }
+  asyncPush(); */
+
+  // Queremos hacer los push por orden ya que geolocation tarda unos milessegunddos mas en reponder
+  // asyncF se encarga de resolver ese problema
+
+  let  geoLocation = () => { 
+    return new Promise (resolve => { 
+      window.navigator.geolocation.getCurrentPosition(  geoResult => {
+        // Coordenas obtenidas
+    
+        geolatitude = geoResult.coords.latitude, 
+        geolongitude = geoResult.coords.longitude
+        resolve (
+          citiesPrincipal.push({
+            latitude: geoResult.coords.latitude,
+            longitude: geoResult.coords.longitude
+          }),
+          geolatitude = geoResult.coords.latitude,
+          geolongitude = geoResult.coords.latitude
+        )
+      })
+    });
+  } 
+
+  async function asyncF() {
+    let x = await geoLocation();
+    
+    citiesPrincipal.push({
+      latitude: 40.41,
+      longitude: -3.70,
+    })
+
+    citiesPrincipal.push({
+      latitude: 41.41,
+      longitude: 2.19,
+    })
+
+    let y = await citiesForeach();
+    return  await x ,await y
+  }
+
+  asyncF(); 
+
+ let citiesForeach = () => {
+  return new Promise(resolve => {
+    resolve(
+      citiesPrincipal.forEach( citie =>
+      getWeath(citie.latitude, citie.longitude)) 
+    )
+  })
+ }
 
 
-citiesPrincipal.push({
-    name: "Barcelona",
-    latitude: 41.41,
-    longitude: 2.19,
-    country_code: "ES"
-});
 
-citiesPrincipal.push({
-    name: "Madrid",
-    latitude: 40.41,
-    longitude: -3.70,
-    country_code: "ES"
-});
-
-
-
-let gfgfg = [] 
-
-let a = [] 
 
 let mapBox = () => {
   mapboxgl.accessToken = 'pk.eyJ1IjoiYWRyaWFuY3JyIiwiYSI6ImNrbnpxNzFtODA4NjIyb3FzMWpzcmc5ankifQ.RQ0oHHVzReNtVz678F61Ag';
@@ -208,7 +282,6 @@ let mapBox = () => {
    marker1 = new mapboxgl.Marker()
   .setLngLat([1.19, 40.41])
   .addTo(map);
-   console.log(addFavoritos[5])
     // Create a default Marker, colored black, rotated 45 degrees.
     citiesPrincipal.forEach(citie => { 
         new mapboxgl.Marker({ color: 'black', rotation: 45 })
@@ -217,24 +290,9 @@ let mapBox = () => {
       .setHTML(`<h3>City name</h3> <p>${citie.name}</p>`))
       .addTo(map);
     });
-
-  /* a.forEach(function(marker) {
-
-    // create a HTML element for each feature
-    var el = document.createElement('div');
-    el.className = 'marker';
-  
-    // make a marker for each feature and add to the map
-    new mapboxgl.Marker({ color: 'black', rotation: 45 })
-      .setLngLat([lat , lon])
-      .addTo(map);
-  }); */
 }
 
-
-
-citiesPrincipal.forEach( citie =>
-   getWeath(citie.latitude, citie.longitude)   ) 
-
-
+   
    mapBox()
+
+ 
