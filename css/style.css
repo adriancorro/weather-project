@@ -6,6 +6,7 @@ body {
 }
 #divmap { 
     width: 600px;
+    margin-top: 10px;
  }
 
 #map { 
@@ -48,4 +49,14 @@ body {
 
 .principal {
     background-color: chartreuse;
+}
+
+
+
+@media screen and (max-width: 620px) {
+    .mapboxgl-canvas {
+        
+        margin-top: 90px;
+         
+    }  
 }
