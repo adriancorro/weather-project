@@ -16,9 +16,10 @@
     // solo con foreach dara unos errores inesperados.
 
     const getWeath = (searchlat, searchlon) => new Promise(function(resolve, reject) {
-    //  setTimeout(() => {
+     
+      //  setTimeout(() => {
         
-      
+       
       // Request API. Las API nos pide que le enviemos 3 parametros 
       const url = new URL(`https://api.weatherbit.io/v2.0/current`)
       // Hay dos formas de interactuar con el Request: 1) Enviando city 2) Enviando lat o lon
@@ -34,18 +35,7 @@
 
     fetch(url)
     // convertimos a json lo que obtenemos
-    .then(response => {
-        if(!response.ok) {
-          console.log('Respuesta de red OK pero respuesta HTTP no OK  ');
-          console.log(response.status);
-          const divChild = document.createElement(`div`)
-          divChild.setAttribute("id", "divChild")
-          //child div
-          divParent.appendChild(divChild);
-          divChild.setAttribute("class", "divChild  error");
-          divChild.innerText = `Network response OK but HTTP response not OK Status: ${response.status}`
-        } return response.json()
-    } )
+    .then(response =>  response.json())
     .then(json => {
   
         // datos a obtener
@@ -95,11 +85,11 @@
             getWeath(Parametro1, Parametro2) por lo que renderiza segun lat y lon
             solo si enviamos lat y lon como parametros getWeath(parametro1, parametro2)se activara esta parte del codigo
   */       if(searchlat && searchlon && addFav ){
-          
+    
             //parent div
             const divChild = document.createElement(`div`)
             divChild.setAttribute("id", "divChild")
-
+            
             //child div
             divParent.appendChild(divChild);
             if(searchlat == geolatitude ){
@@ -113,10 +103,20 @@
             countries.push(city)
 
             fetchGetNameCountrieAsyn().then(response => {
-            const countryDiv = document.createElement(`div`)
-            countryDiv.innerText = response.nativeName
-            divChild.appendChild(countryDiv);
-
+              const countryDiv = document.createElement(`div`)
+              //Por cada iteraccion del array citiesPrincipal se crean estos div
+              //En particular countryDiv.innerText = response.nativeName demora porque
+              //espera respuesta de otra API
+              //Hacemos el resolve para que la informacion la traiga, haga el await y siga con la proxima iteraccion
+              //Se resuelve problema de mostrar los div en orden. Ahora se muestra:
+              // divChild citiesPrincipal[0]
+              // divChild citiesPrincipal[1]
+              // divChild citiesPrincipal[2]
+              // Antes estos no se mostraban en orden.
+              resolve( 
+                countryDiv.innerText = response.nativeName,
+                divChild.appendChild(countryDiv)
+              )
             }); 
 
             fetchGetNameCountrieAsyn().catch(error => {
@@ -137,17 +137,18 @@
             desc.innerText = description
             divChild.appendChild(desc);
             mapBox()
-            }
-    })
+            }  
+    }) 
     .catch((error) => {
    
         console.log(error)
-    }) 
-    resolve(console.log("ok: for (const element of citiesPrincipal) "));
+    })  
+    
     //  reject(console.log("Fail: for (const element of citiesPrincipal) ")); 
 
 
   //  }, 3000);
+  
     });
     
 let body = document.querySelector("body")
@@ -226,8 +227,8 @@ let pushCitiesFav = () => {
 // El orden para mostrar:
 // Puede colocar await pushCitiesFav() antes de await pushLocationActual() o de formas deiferentes
   async function asyncF() {
-  await pushCitiesFav();
-  await geoLocationActualAndPush();
+ let a = await pushCitiesFav();
+ let b =  await geoLocationActualAndPush();
  
       // https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
       // Usar forEach y await puede dar errores inesperados
@@ -246,9 +247,11 @@ let pushCitiesFav = () => {
       } */
      
   for (const element of citiesPrincipal) {
-    await getWeath(element.latitude,element.longitude )
+   let c = await getWeath(element.latitude,element.longitude )
     console.log( `resolve 3. Element:  ${citiesPrincipal.indexOf(element) }` )
   }
+
+  return await a, await b , await c
  
 }
 
