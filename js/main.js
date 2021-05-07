@@ -16,10 +16,6 @@
     // solo con foreach dara unos errores inesperados.
 
     const getWeath = (searchlat, searchlon) => new Promise(function(resolve, reject) {
-     
-      //  setTimeout(() => {
-        
-       
       // Request API. Las API nos pide que le enviemos 3 parametros 
       const url = new URL(`https://api.weatherbit.io/v2.0/current`)
       // Hay dos formas de interactuar con el Request: 1) Enviando city 2) Enviando lat o lon
@@ -62,8 +58,15 @@
         addFavoritos.push(city)
         addFavoritos.push(weather.lat)
         addFavoritos.push(weather.lon)
-        
-        
+         
+        citiesPrincipal.forEach( citie => {
+          if(citie.latitude === weather.lat && citie.longitude === weather.lon || citie.latitude === searchlat && citie.longitude === searchlon  ){
+            Object.defineProperty(citie, 'name', {
+              value: city
+            });
+          }
+        })  
+       
         const fetchGetNameCountrieAsyn = async () => {
           try {
               const response = await fetch(`https://restcountries.eu/rest/v2/alpha/${country_code}`);
@@ -112,7 +115,7 @@
               // divChild citiesPrincipal[0]
               // divChild citiesPrincipal[1]
               // divChild citiesPrincipal[2]
-              // Antes estos no se mostraban en orden.
+              // sin await estos no se mostraban en orden.
               resolve( 
                 countryDiv.innerText = response.nativeName,
                 divChild.appendChild(countryDiv)
@@ -140,15 +143,9 @@
             }  
     }) 
     .catch((error) => {
-   
         console.log(error)
     })  
-    
     //  reject(console.log("Fail: for (const element of citiesPrincipal) ")); 
-
-
-  //  }, 3000);
-  
     });
     
 let body = document.querySelector("body")
@@ -161,27 +158,23 @@ searchCity.addEventListener("keyup", function(event) {
   const value = event.target.value;
   addFav = false
   getWeath(btnSearch.value)
-  
 })
 
 btnSearch.addEventListener("click", function( event ) {
-  addFavoritos = []
-  addFav = true
+    addFavoritos = []
+    addFav = true
     getWeath()
   }, false);
 
   btnFav.addEventListener("click", function( event ) {
-    addFav = true
-    citiesPrincipal.push({
+      addFav = true
+      citiesPrincipal.push({
       latitude: addFavoritos[4],
       longitude: addFavoritos[5]
     })
     getWeath(addFavoritos[5], addFavoritos[4])
-
     addFavoritos = []
   }, false);
-
-
 
   /* 
 asíncrona funciones
@@ -218,8 +211,7 @@ let pushCitiesFav = () => {
           latitude: 41.41,
           longitude: 2.19,
         }), 
-        console.log("resolve 2"),
-        console.log(citiesPrincipal)
+        console.log("resolve 2")
       )
   })
 }
@@ -227,11 +219,11 @@ let pushCitiesFav = () => {
 // El orden para mostrar:
 // Puede colocar await pushCitiesFav() antes de await pushLocationActual() o de formas deiferentes
   async function asyncF() {
- let a = await pushCitiesFav();
- let b =  await geoLocationActualAndPush();
+  await pushCitiesFav();
+  await geoLocationActualAndPush();
  
       // https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
-      // Usar forEach y await puede dar errores inesperados
+      // Usar await dentro de forEach o map puede dar errores inesperados
       //forEach() intenta ejecutarse secuencialmente y es posible que no siempre obtenga el resultado esperado.
       // el siguiente codigo dara error:
       //citiesPrincipal.forEach( citie => await getWeath(citie.latitude,citie.longitude ))
@@ -247,46 +239,9 @@ let pushCitiesFav = () => {
       } */
      
   for (const element of citiesPrincipal) {
-   let c = await getWeath(element.latitude,element.longitude )
+    await getWeath(element.latitude,element.longitude )
     console.log( `resolve 3. Element:  ${citiesPrincipal.indexOf(element) }` )
   }
-
-  return await a, await b , await c
- 
 }
-
  asyncF();
-
-let mapBox = () => {
-  mapboxgl.accessToken = 'pk.eyJ1IjoiYWRyaWFuY3JyIiwiYSI6ImNrbnpxNzFtODA4NjIyb3FzMWpzcmc5ankifQ.RQ0oHHVzReNtVz678F61Ag';
-  var map = new mapboxgl.Map({
-  container: 'map',
-  style: 'mapbox://styles/mapbox/streets-v11',
-  center: [ geolongitude, geolatitude],
-  zoom: 3
-  });
-   
-  // Create a default Marker and add it to the map.
- /*  let marker1
-   marker1 = new mapboxgl.Marker()
-  .setLngLat([1.19, 40.41])
-  .addTo(map); */
-    // Create a default Marker, colored black, rotated 45 degrees.
-    citiesPrincipal.forEach(citie => { 
-       if(citie.longitude === geolongitude){ 
-        new mapboxgl.Marker({ color: 'green', rotation: 310 })
-        .setLngLat([ citie.longitude, citie.latitude ])
-        .setPopup(new mapboxgl.Popup({ offset: 30 }) // add popups
-        .setHTML(`<h3>City name</h3> <p>${citie.name}</p>`))
-        .addTo(map);
-       }else {
-        new mapboxgl.Marker({ color: 'black', rotation: 45 })
-        .setLngLat([ citie.longitude, citie.latitude ])
-        .setPopup(new mapboxgl.Popup({ offset: 15 }) // add popups
-        .setHTML(`<h3>City name</h3> <p>${citie.name}</p>`))
-        .addTo(map);
-       }
-  
-    });
-}
 
