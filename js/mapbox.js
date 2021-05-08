@@ -7,18 +7,20 @@ let mapBox = () => {
     zoom: 3
     });
       citiesPrincipal.forEach(citie => { 
-         if(citie.longitude === geolongitude){ 
-          new mapboxgl.Marker({ color: 'green', rotation: 310 })
-          .setLngLat([ citie.longitude, citie.latitude ])
-          .setPopup(new mapboxgl.Popup({ offset: 30 }) // add popups
-          .setHTML(`<h3>City name</h3> <p>${citie.name}</p>`))
-          .addTo(map);
-         }else {
-          new mapboxgl.Marker({ color: 'black', rotation: 45 })
-          .setLngLat([ citie.longitude, citie.latitude ])
-          .setPopup(new mapboxgl.Popup({ offset: 15 }) // add popups
-          .setHTML(`<h3>City name</h3> <p>${citie.name}</p>`))
-          .addTo(map);
+         if (citie.name){
+            if(citie.longitude === geolongitude){ 
+               new mapboxgl.Marker({ color: 'green', rotation: 310 })
+               .setLngLat([ citie.longitude, citie.latitude ])
+               .setPopup(new mapboxgl.Popup({ offset: 30 }) // add popups
+               .setHTML(`<h3>City name</h3> <p>${citie.name}</p>`))
+               .addTo(map);
+              }else {
+                 new mapboxgl.Marker({ color: 'black', rotation: 45 })
+                 .setLngLat([ citie.longitude, citie.latitude ])
+                 .setPopup(new mapboxgl.Popup({ offset: 15 }) // add popups
+                 .setHTML(`<h3>City name</h3> <p>${citie.name}</p>`))
+                 .addTo(map);
+              }
          }
       });
   }

@@ -52,20 +52,20 @@
         descriptionWeatherDiv.innerText =  description
         cityWeatherDiv.innerText = city
         addFavoritos = []
-        addFavoritos.push(urlIcon)
-        addFavoritos.push(temperature)
-        addFavoritos.push(description)
-        addFavoritos.push(city)
-        addFavoritos.push(weather.lat)
-        addFavoritos.push(weather.lon)
+        if( isNaN(weather.lat) === false  || isNaN(weather.lon) === false  ){
+        
+          addFavoritos.push(urlIcon)
+          addFavoritos.push(temperature)
+          addFavoritos.push(description)
+          addFavoritos.push(city)
+          addFavoritos.push(weather.lat)
+          addFavoritos.push(weather.lon)
+
+        }
+
+      
          
-        citiesPrincipal.forEach( citie => {
-          if(citie.latitude === weather.lat && citie.longitude === weather.lon || citie.latitude === searchlat && citie.longitude === searchlon  ){
-            Object.defineProperty(citie, 'name', {
-              value: city
-            });
-          }
-        })  
+     
        
         const fetchGetNameCountrieAsyn = async () => {
           try {
@@ -139,6 +139,15 @@
             const desc = document.createElement(`div`)
             desc.innerText = description
             divChild.appendChild(desc);
+            
+            citiesPrincipal.forEach( citie => {
+              if(citie.latitude === weather.lat && citie.longitude === weather.lon || citie.latitude === searchlat && citie.longitude === searchlon  ){
+                Object.defineProperty(citie, 'name', {
+                  value: city
+                });
+              }
+            })  
+
             mapBox()
             }  
     }) 
@@ -168,11 +177,16 @@ btnSearch.addEventListener("click", function( event ) {
 
   btnFav.addEventListener("click", function( event ) {
       addFav = true
-      citiesPrincipal.push({
-      latitude: addFavoritos[4],
-      longitude: addFavoritos[5]
-    })
-    getWeath(addFavoritos[5], addFavoritos[4])
+      if( isNaN( addFavoritos[4]) === false  || isNaN(addFavoritos[5]) === false  ){
+        citiesPrincipal.push({
+          latitude: addFavoritos[4],
+          longitude: addFavoritos[5]
+        })
+
+        getWeath(addFavoritos[5], addFavoritos[4])
+      }
+      console.log(citiesPrincipal)
+   
     addFavoritos = []
   }, false);
 
